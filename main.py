@@ -43,6 +43,69 @@ Password = Entry(frame, width=35, show='*', bd=2)
 Password.grid(row=2, column=1, padx=5, pady=10)
 
 
+def verify_login():
+    suffix = []
+    user = userName.get()
+    passw = Password.get()
+
+    userName.delete(0, END)
+    Password.delete(0, END)
+
+    list_of_files = os.listdir()
+    for i in list_of_files:
+        r_i = i.split('.')
+        suffix.append(r_i[0])
+
+    if(user in suffix):
+        user_file = open(str(user+".txt"), "r")
+        verify = user_file.read().splitlines()
+        print(verify)
+        if(passw in verify):
+            messagebox.showinfo(
+                title="Successful", message="Login Successful")
+            open_mainwindow()
+        else:
+            messagebox.showerror(title="Error", message="Wrong Password")
+    else:
+        messagebox.showerror(title="Error", message="No user found")
+
+def open_mainwindow():
+    global clockBtn
+    global totalBalancevar
+    global amountEntry
+    global DateEntry
+    global mainWindow
+    root.destroy()
+
+    mainWindow = Tk()
+    mainWindow.geometry("950x500")
+    mainWindow.title('Villasukka App')
+
+    # rootHeight = mainWindow.winfo_height()
+    # rootWidth = mainWindow.winfo_width()
+    MyOwnMenu = Menu(mainWindow)
+    mainWindow.config(menu=MyOwnMenu)
+
+    # MenuItems
+    # File
+    file_menu = Menu(MyOwnMenu)
+    MyOwnMenu.add_cascade(label="File", menu=file_menu)
+    file_menu.add_command(label="Exit", command=mainWindow.quit)
+
+    edit_menu = Menu(MyOwnMenu)
+    MyOwnMenu.add_cascade(label="Edit", menu=edit_menu)
+
+    option_menu = Menu(MyOwnMenu)
+    MyOwnMenu.add_cascade(label="Options", menu=option_menu)
+
+    Tools_menu = Menu(MyOwnMenu)
+    MyOwnMenu.add_cascade(label="Tools", menu=Tools_menu)
+
+    Help_menu = Menu(MyOwnMenu)
+    MyOwnMenu.add_cascade(label="File", menu=Help_menu)
+
+
+
 # functions
 
 
