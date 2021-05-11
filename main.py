@@ -142,7 +142,7 @@ def open_mainwindow():
 
 
     # Buttons
-loginBtn = Button(frame, text="login", bg="Blue",
+loginBtn = Button(frame, text="login", bg="Green",
                   fg="white", height=1, width=10, font="Raleway", command=open_mainwindow)
 loginBtn.grid(row=3, column=1, pady=5)
 
