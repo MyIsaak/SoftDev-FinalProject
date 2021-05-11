@@ -42,6 +42,13 @@ userName.grid(row=1, column=1, padx=10, pady=10)
 Password = Entry(frame, width=35, show='*', bd=2)
 Password.grid(row=2, column=1, padx=5, pady=10)
 
+def time():
+    # current date and time
+
+    now = datetime.now()
+    date_time = now.strftime("%I:%M:%S")
+    time_label.config(text=date_time)
+
 
 def verify_login():
     suffix = []
@@ -107,6 +114,41 @@ def open_mainwindow():
 
 
 # functions
+
+
+# Buttons
+    LogoutButton = Button(frame_middle_1, text="Logout", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
+    LogoutButton.grid(row=0, column=2, pady=20, padx=120)
+
+    TransactionButton = Button(frame_middle_1, text="Add Transaction", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(frame_middle_2))
+    TransactionButton.grid(row=1, column=2, pady=20, padx=120)
+
+    EditButton = Button(frame_middle_1, text="Edit account", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=show_edit)
+    EditButton.grid(row=2, column=2, pady=20, padx=120)
+
+    SetupButton = Button(frame_middle_1, text="Setup", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(frame_middle_3))
+    SetupButton.grid(row=3, column=2, pady=20, padx=120)
+
+    SummaryButton = Button(frame_middle_1, text="Account Summary", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=show_summary)
+    SummaryButton.grid(row=4, column=2, pady=20, padx=120)
+    PlayButton = Button(frame_middle_1, text="Play Lotto", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=play_lotto)
+    PlayButton.grid(row=5, column=2, pady=20, padx=120)
+
+    ClockButton = PhotoImage(file='images/clockv2.png')
+
+    GetTimeButton = Button(frame_add, image=ClockButton, border=0, command=time)
+
+    GetTimeButton.grid(row=0, column=0, pady=20, padx=5, sticky="ew")
+
+
+    # Buttons
+loginBtn = Button(frame, text="login", bg="Green",
+                  fg="white", height=1, width=10, font="Raleway", command=open_mainwindow)
+loginBtn.grid(row=3, column=1, pady=5)
+
+
+frame.place(relx=0.5, rely=0.5, anchor=CENTER)
+
 
 
 root.mainloop()
