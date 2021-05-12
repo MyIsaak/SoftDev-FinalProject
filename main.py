@@ -94,6 +94,7 @@ def update_Amount():
 def show_frame(frame):
     frame.tkraise()
 
+
 def open_mainwindow():
     global clockBtn
     global totalBalancevar
@@ -188,6 +189,27 @@ def open_mainwindow():
     GetTimeButton.grid(row=0, column=0, pady=20, padx=5, sticky="ew")
 
 
+    LogoutButton2 = Button(frame_middle_2, text="Logout", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
+    LogoutButton2.grid(row=0, column=3, pady=(100, 20), padx=100)
+
+    TransactionButton2 = Button(frame_middle_2, text="Add Transaction", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=submit)
+    TransactionButton2.grid(row=1, column=3, pady=(0, 20), padx=100)
+
+    CancelButton = Button(frame_middle_2, text="Cancel and return", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(frame_middle_1))
+    CancelButton.grid(row=2, column=3, pady=(0, 20), padx=100)
+
+
+    LogoutButton3 = Button(frame_middle_3, text="Logout", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
+    LogoutButton3.grid(row=0, column=3, pady=(100, 20), padx=50)
+
+    AcceptButton = Button(frame_middle_3, text="Accept Changes", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=update_savings)
+    AcceptButton.grid(row=1, column=3, pady=(0, 20), padx=50)
+
+    ReturnButton = Button(frame_middle_3, text="Return", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(frame_middle_1))
+    ReturnButton.grid(row=2, column=3, pady=(0, 20), padx=50)
+
+
+################################### database
 
 # Time Label
     
@@ -208,14 +230,45 @@ def open_mainwindow():
 
 
 
+conn = sqlite3.connect('Money_Transaction.db')
+c = conn.cursor()
+
+c.execute("""CREATE TABLE IF NOT EXISTS wallet(
+       ID INTEGER PRIMARY KEY AUTOINCREMENT,
+   DATE           TEXT,
+   AMOUNT         INT,
+   CATEGORY       TEXT,
+   TYPE           INT
+
+    )"""
+
+          )
+
+c.execute("""CREATE TABLE IF NOT EXISTS Account(
+            id int UNIQUE,
+            Balance INTEGER  )"""
+
+          )
+
+c.execute("Insert or IGNORE INTO Account VALUES(:id,:balance)",
+
+          {'id': 1,
+           'balance': 100000
+           }
+
+
+          )
+conn.commit()
+
+
+
     # Buttons
-loginBtn = Button(frame, text="login", bg="Green",
-                  fg="white", height=1, width=10, font="Raleway", command=open_mainwindow)
+loginBtn = Button(frame, text="login", bg="Green",fg="white", height=1, width=10, font="Raleway", command=open_mainwindow)
 loginBtn.grid(row=3, column=1, pady=5)
 
 
 frame.place(relx=0.5, rely=0.5, anchor=CENTER)
 
 
-
+conn.close()
 root.mainloop()
