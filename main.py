@@ -17,7 +17,7 @@ import json
 import os
 import matplotlib
 from matplotlib.pyplot import Figure
-#import emoji
+# import emoji  ;)  Because why not !
 
 matplotlib.use('TkAgg')  
 root = Tk()
@@ -81,7 +81,6 @@ def update_Amount():
     c = conn.cursor()
     c.execute("SELECT Balance FROM Account")
     records = c.fetchall()
-    # print(int(''.join(map(str, records[0]))))  # int value
 
     totalBalancevar = str(''.join(map(str, records[0])))
 
@@ -94,6 +93,67 @@ def update_Amount():
 def show_frame(frame):
     frame.tkraise()
 
+def show_edit():
+    global showEditwindow
+    showEditwindow = Tk()
+    showEditwindow.geometry("980x500")
+    showEditwindow.title('Amazing butler App')          #Window configuration (Dimensions, Title, etc...)
+    global combodatevar
+    global dateCombo
+
+    global daterange_1
+    daterange_1 = StringVar()                           #Introducing the date variables as strings
+    global daterange_2
+    daterange_2 = StringVar()
+    combodatevar = StringVar()
+
+    daterangeLabel = Label(showEditwindow, text="Date Range", font=("Arial Bold", 10))             #Label configuration (Dimensions, font, etc...)
+    daterangeLabel.place(x=100, y=40, )
+
+    DateEntryRange1 = Entry(showEditwindow, width=35, bd=2, textvariable=daterange_1)               #Configuration for the data entry space
+    DateEntryRange1.place(x=250, y=40, )
+
+    DateEntryRange2 = Entry(showEditwindow, width=35,bd=2, textvariable=daterange_2)
+    DateEntryRange2.place(x=500, y=40, )
+
+    LogoutButton = Button(showEditwindow, text="Logout", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)    # Logout Btn
+    LogoutButton.place(x=820, y=250, )
+
+    ReturnButton = Button(showEditwindow, text="Return", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=showEditwindow.destroy)  # Return Btn
+    ReturnButton.place(x=820, y=150, )
+
+    AcceptButton = Button(showEditwindow, text="Accept", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)    # Accept Btn
+    AcceptButton.place(x=650, y=200, )
+    
+    ExportButton = Button(showEditwindow, text="Export to CSV", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=showEditwindow.destroy)
+    ExportButton.place(x=820, y=200, )                                                                                                          # Export Btn
+
+    RefreshButton = Button(showEditwindow, text="Refresh", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=showEditwindow.destroy)
+    RefreshButton.place(x=650, y=150, )                                                                                                         # Refresh Btn
+
+    # Now going to what we called as a tree
+    # total savings = (total income - total expenses)
+
+    TreeFrame = Frame(showEditwindow, width=600, height=280, bg="red")
+    TreeFrame.pack(side=LEFT, padx=20)
+
+    # Tree Scroll
+    TreeScroll = Scrollbar(TreeFrame)
+    TreeScroll.pack(side=RIGHT, fill=Y)
+
+    MyTree = ttk.Treeview(TreeFrame, yscrollcommand=TreeScroll.set, selectmode='extended')
+    MyTree.pack()
+
+    TreeScroll.config(command=MyTree.yview)
+
+    MyTree['columns'] = ("ID", "Date", "Amount", "Category")
+    MyTree.column("#0", width=0, stretch=NO)
+    MyTree.column("ID", anchor=W, width=80)
+    MyTree.column("Date", anchor=W, width=120)
+
+    MyTree.column("Amount", anchor=CENTER, width=120)
+
+    MyTree.column("Category", anchor=CENTER, width=120)
 
 def open_mainwindow():
     global clockBtn
@@ -137,16 +197,16 @@ def open_mainwindow():
     frame_add.grid(row=0, column=0, padx=10, pady=10, sticky='nw')
     frame_add.grid_propagate(False)
 
-    frame_middle_1 = Frame(mainWindow, width=590, height=480,)
+    Frame_1 = Frame(mainWindow, width=590, height=480,)
 
-    frame_middle_2 = Frame(mainWindow, width=590, height=480,)
-    frame_middle_3 = Frame(mainWindow, width=590, height=480,)
+    Frame_2 = Frame(mainWindow, width=590, height=480,)
+    Frame_3 = Frame(mainWindow, width=590, height=480,)
 
-    for frame in (frame_middle_1, frame_middle_2, frame_middle_3):
+    for frame in (Frame_1, Frame_2, Frame_3):
         frame.grid(row=0, column=1, padx=10, pady=10, sticky='nw')
         frame.grid_propagate(False)
 
-    show_frame(frame_middle_1)
+    show_frame(Frame_1)
 
     api = "https://api.openweathermap.org/data/2.5/weather?q=" + \
         "Beirut"+"&appid=0ba604883a3d0c62f8151ad357a2f74d"
@@ -157,29 +217,67 @@ def open_mainwindow():
 
     final_info = condition + " Beirut " + str(temp) + "°C"
 
-    # final_info = "NO INTERNET CONNECTION"
+    # final info = "NO INTERNET CONNECTION"
 
     weatherLabel = Label(
-        frame_middle_1, text="weather "+final_info+"", borderwidth=1, relief="solid", font=('Arial Bold', 10))
+        Frame_1, text="weather "+final_info+"", borderwidth=1, relief="solid", font=('Arial Bold', 10))
     weatherLabel.grid(
         row=0, column=0, pady=(0, 20), padx=20, ipadx=10, ipady=10,  sticky='ew')
 
+
+    global var
+    global catvar
+    global amountvar
+    global datevar
+    global totalBalancevar
+    totalBalancevar = "N/O"
+    var = IntVar()
+    datevar = StringVar()
+    catvar = StringVar()
+    amountvar = StringVar()
+
+    catLabel = Label(Frame_2, text="Category", font=("Arial Bold", 10))
+    catLabel.grid(row=0, column=0, pady=(100, 20), padx=(20, 10))
+    categoryCombo = ttk.Combobox(Frame_2, width=30, height=10, textvariable=catvar)
+    categoryCombo['values'] = ['Rent', 'Travel', 'Groceries', 'Subscription', 'Guilty Pleasures']
+    categoryCombo.current(0)
+    categoryCombo.grid(row=0, column=1, pady=(100, 20), padx=10, ipadx=5)
+
+    amountLabel = Label(Frame_2, text="Amount", font=("Arial Bold", 10))
+    amountLabel.grid(row=1, column=0, pady=(0, 20), padx=(20, 10))
+
+    amountEntry = Entry(Frame_2, width=35, bd=2, textvariable=amountvar)
+    amountEntry.grid(row=1, column=1, pady=(0, 20), padx=10)
+
+    dateLabel = Label(Frame_2, text="Date", font=("Arial Bold", 10))
+    dateLabel.grid(row=2, column=0, pady=(0, 20), padx=(20, 10))
+
+    dateEntry = Entry(Frame_2, width=35, bd=2, textvariable=datevar)
+    dateEntry.insert(0, "Enter manual date or use picker")
+    dateEntry.grid(row=2, column=1, pady=(0, 20), padx=10)
+
+    moneyLabel = Label(Frame_2, text="Money in?", font=("Arial Bold", 10))
+    moneyLabel.grid(row=3, column=0, pady=(0, 20), padx=(20, 10))
+
+    moneyBox = Checkbutton(Frame_2, variable=var, fg="Blue",)
+    moneyBox.grid(row=3, column=1, pady=(0, 20), padx=5, sticky='w')
+
 # Buttons
-    LogoutButton = Button(frame_middle_1, text="Logout", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
+    LogoutButton = Button(Frame_1, text="Logout", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
     LogoutButton.grid(row=0, column=2, pady=20, padx=120)
 
-    TransactionButton = Button(frame_middle_1, text="Add Transaction", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(frame_middle_2))
+    TransactionButton = Button(Frame_1, text="Add Transaction", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(Frame_2))
     TransactionButton.grid(row=1, column=2, pady=20, padx=120)
 
-    EditButton = Button(frame_middle_1, text="Edit account", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=show_edit)
+    EditButton = Button(Frame_1, text="Edit account", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=show_edit)
     EditButton.grid(row=2, column=2, pady=20, padx=120)
 
-    SetupButton = Button(frame_middle_1, text="Setup", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(frame_middle_3))
+    SetupButton = Button(Frame_1, text="Setup", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(Frame_3))
     SetupButton.grid(row=3, column=2, pady=20, padx=120)
 
-    SummaryButton = Button(frame_middle_1, text="Account Summary", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=show_summary)
+    SummaryButton = Button(Frame_1, text="Account Summary", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=show_summary)
     SummaryButton.grid(row=4, column=2, pady=20, padx=120)
-    PlayButton = Button(frame_middle_1, text="Play Lotto", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=play_lotto)
+    PlayButton = Button(Frame_1, text="Play Lotto", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=play_lotto)
     PlayButton.grid(row=5, column=2, pady=20, padx=120)
 
     ClockButton = PhotoImage(file='images/clockv2.png')
@@ -189,23 +287,23 @@ def open_mainwindow():
     GetTimeButton.grid(row=0, column=0, pady=20, padx=5, sticky="ew")
 
 
-    LogoutButton2 = Button(frame_middle_2, text="Logout", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
+    LogoutButton2 = Button(Frame_2, text="Logout", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
     LogoutButton2.grid(row=0, column=3, pady=(100, 20), padx=100)
 
-    TransactionButton2 = Button(frame_middle_2, text="Add Transaction", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=submit)
+    TransactionButton2 = Button(Frame_2, text="Add Transaction", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=submit)
     TransactionButton2.grid(row=1, column=3, pady=(0, 20), padx=100)
 
-    CancelButton = Button(frame_middle_2, text="Cancel and return", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(frame_middle_1))
+    CancelButton = Button(Frame_2, text="Cancel and return", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(Frame_1))
     CancelButton.grid(row=2, column=3, pady=(0, 20), padx=100)
 
 
-    LogoutButton3 = Button(frame_middle_3, text="Logout", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
+    LogoutButton3 = Button(Frame_3, text="Logout", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
     LogoutButton3.grid(row=0, column=3, pady=(100, 20), padx=50)
 
-    AcceptButton = Button(frame_middle_3, text="Accept Changes", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=update_savings)
+    AcceptButton = Button(Frame_3, text="Accept Changes", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=update_savings)
     AcceptButton.grid(row=1, column=3, pady=(0, 20), padx=50)
 
-    ReturnButton = Button(frame_middle_3, text="Return", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(frame_middle_1))
+    ReturnButton = Button(Frame_3, text="Return", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(Frame_1))
     ReturnButton.grid(row=2, column=3, pady=(0, 20), padx=50)
 
 
@@ -218,7 +316,7 @@ def open_mainwindow():
     time_label.grid(row=1, column=0, pady=5, padx=20,)
 
     global amount_label
-    amount_label = Label(frame_middle_1, borderwidth=1, relief="solid", font=('Arial Bold', 10))
+    amount_label = Label(Frame_1, borderwidth=1, relief="solid", font=('Arial Bold', 10))
     amount_label.grid(row=1, column=0, pady=(0, 20), padx=20, ipadx=10, ipady=10,  sticky='ew')
 
     # Calender
