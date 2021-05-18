@@ -93,6 +93,99 @@ def update_Amount():
 def show_frame(frame):
     frame.tkraise()
 
+
+def show_summary():
+    global showWindow
+    showWindow = Tk()
+    showWindow.geometry("750x500")
+    showWindow.title('Villasukka')
+    global combodatevar
+    global dateCombo
+
+    combodatevar = StringVar()
+   
+    catLabel = Label(showWindow, text="Month", font=("Arial Bold", 10))
+    catLabel.place(x=190, y=40, )
+
+    dateCombo = ttk.Combobox(showWindow, width=30, textvariable=combodatevar)
+    dateCombo['values'] = ['January', 'February', 'March', 'April', 'May', 'June', 'August', "September", 'October', 'November', 'December']
+    dateCombo.place(x=270, y=40, )
+    dateCombo.bind("<<ComboboxSelected>>", __comboBoxCb)
+
+    logoutBtn = Button(showWindow, text="Logout", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
+    logoutBtn.place(x=580, y=100, )
+    returnBtn = Button(showWindow, text="return", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=showWindow.destroy)
+    returnBtn.place(x=580, y=150, )
+
+    # summery database
+    conn = sqlite3.connect('Money_Transaction.db')
+    c = conn.cursor()
+    c.execute("select sum(amount) from wallet where TYPE=0")
+    records_spend = c.fetchall()
+    tot_spend = int(''.join(map(str, records_spend[0])))  # int value
+
+    c.execute("select sum(amount) from wallet where TYPE=1")
+    records_in = c.fetchall()
+    tot_in = int(''.join(map(str, records_in[0])))  # int value
+
+    conn.commit()
+    conn.close()
+
+    tot_saving = (tot_in-tot_spend)
+
+    # some Labels
+    spendingLabel = Label(showWindow, text="Spending: " +str(tot_spend), font=("Arial Bold", 10))
+    spendingLabel.place(x=580, y=250)
+    MoneyinLabel = Label(showWindow, text="Money in: " +str(tot_in), font=("Arial Bold", 10))
+    MoneyinLabel.place(x=580, y=200)
+    savingLabel = Label(showWindow, text="Money in: " +str(tot_saving), font=("Arial Bold", 10))
+    savingLabel.place(x=580, y=300)
+
+def update_savings():
+
+    f = open("savings.txt", 'w')
+
+    open("savings.txt", 'w').close()
+
+    f.write("saving " + str(savingEntry.get()))
+    f.write("\n")
+    f.write("target " + str(targetLabelEntry.get()))
+    f.write("\n")
+    f.write("monthly " + str(monthlyEntry.get()))
+    messagebox.showinfo(title="Successful", message="Changes Made")
+    f.close()
+
+# lotto
+def play_lotto():
+
+    am = 1000
+    rnd = random.choice([1, 4, 8, 10, 3, 7, 9, 2])
+    print(rnd)
+    conn = sqlite3.connect('Money_Transaction.db')
+    c = conn.cursor()
+    c.execute("SELECT Balance FROM Account")
+    records = c.fetchall()
+    totbalance = int(''.join(map(str, records[0])))  # int value
+
+    if(rnd % 2 == 0):
+        totbalance = totbalance + (am*rnd)
+    else:
+        totbalance = totbalance - (am*rnd)
+    c.execute("""UPDATE Account SET Balance=:balance
+
+                WHERE id = :Id """,
+              {
+                  'balance': totbalance,
+                  'Id': 1
+              }
+              )
+
+    conn.commit()
+    conn.close()
+    messagebox.showinfo(title="Lotto", message="Gambling is stupid you have won nothing")
+
+
+
 def show_edit():
     global showEditwindow
     showEditwindow = Tk()
