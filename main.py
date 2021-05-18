@@ -155,7 +155,8 @@ def update_savings():
     messagebox.showinfo(title="Successful", message="Changes Made")
     f.close()
 
-# lotto
+# Lotto
+
 def play_lotto():
 
     am = 1000
