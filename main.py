@@ -533,7 +533,7 @@ def open_mainwindow():
     x = []
     y = []
     for line in open("savings.txt", "r").readlines():  # Read the lines
-        # Split on the space, and store the results in a list of two strings
+        
         info = line.split()
         print(info)
         x.append(info[0])
@@ -562,7 +562,7 @@ def open_mainwindow():
     monthlyEntry.grid(row=2, column=1, pady=(0, 20), padx=10, ipadx=5)
     monthlyEntry.insert(0, y[2])
 
-################################### database
+############################# database
 
 # Time Label
     
