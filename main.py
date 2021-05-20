@@ -93,6 +93,81 @@ def update_Amount():
 def show_frame(frame):
     frame.tkraise()
 
+def __comboBoxCb(event):
+
+    top = Frame(showWindow, width=480, height=380)
+    top.place(x=80, y=100)
+
+    if(int(dateCombo.current()) < 10):
+        date = int(dateCombo.current())+1
+    else:
+        date = 3
+    date = str(date)
+    fig = matplotlib.pyplot.Figure(figsize=(7, 5), dpi=60)
+
+    # create matplotlib canvas using `fig` and assign to widget `top`
+    canvas = FigureCanvasTkAgg(fig, top)
+
+    # get canvas as tkinter widget and put in widget `top`
+    canvas.get_tk_widget().pack()
+
+    conn = sqlite3.connect('Money_Transaction.db')
+
+    c = conn.cursor()
+
+    c.execute(
+        "select sum(amount) from wallet where substr(date,0,2) =(?) and CATEGORY='Rent' and TYPE=0 ", (date))
+    records_rent = c.fetchall()
+    if(not all(records_rent[0])):
+        # int value
+        total_bal_rent = 0
+
+    else:
+        total_bal_rent = int(''.join(map(str, records_rent[0])))
+
+    c.execute("select sum(amount) from wallet where substr(date,0,2) =(?) and CATEGORY='Travel' and TYPE=0", (date))
+    records_travel = c.fetchall()
+
+    if(not all(records_travel[0])):
+        # int value
+        total_bal_travel = 0
+
+    else:
+        total_bal_travel = int(''.join(map(str, records_travel[0])))
+
+    c.execute("select sum(amount) from wallet where substr(date,0,2) =(?) and CATEGORY='Grocereis' and TYPE=0", (date))
+    records_groc = c.fetchall()
+
+    if(not all(records_groc[0])):
+        # int value
+        total_bal_groc = 0
+
+    else:
+        total_bal_groc = int(''.join(map(str, records_groc[0])))
+
+    c.execute("select sum(amount) from wallet where substr(date,0,2) =(?) and CATEGORY='Subscription' and TYPE=0", (date))
+    records_subs = c.fetchall()
+
+    if(not all(records_subs[0])):
+        # int value
+        total_bal_subs = 0
+
+    else:
+        total_bal_subs = int(''.join(map(str, records_subs[0])))
+
+    c.execute("select sum(amount) from wallet where substr(date,0,2) =(?) and CATEGORY='Guilty Pleasure'and TYPE=0", (date))
+    records_guilty = c.fetchall()
+
+    if(not all(records_guilty[0])):
+        # int value
+        total_bal_guilty = 0
+
+    else:
+        total_bal_guilty = int(''.join(map(str, records_guilty[0])))
+
+    ax1 = fig.add_subplot(111)
+    df = pd.DataFrame({'Catagories': ['Rent', 'Travel', 'Grocereis', 'Subscription', 'Guilty Pleasure'], 'Spendings': [total_bal_rent, total_bal_travel, total_bal_groc, total_bal_subs, total_bal_guilty]})
+    df.plot.bar(x='Catagories', y='Spendings', rot=0, ax=ax1)
 
 def show_summary():
     global showWindow
