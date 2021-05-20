@@ -22,7 +22,11 @@ from matplotlib.pyplot import Figure
 matplotlib.use('TkAgg')  
 root = Tk()
 root.geometry("600x400")
+<<<<<<< HEAD
 root.title('Budget Manager')
+=======
+root.title('Budget Manager App')
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
 frame = Frame(root,)
 
 # Login_Labels
@@ -170,7 +174,11 @@ def show_summary():
     global showWindow
     showWindow = Tk()
     showWindow.geometry("750x500")
+<<<<<<< HEAD
     showWindow.title('Budget Manager')
+=======
+    showWindow.title('Budget Manager App')
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
     global combodatevar
     global dateCombo
 
@@ -262,13 +270,23 @@ def submit():
     if(amountvar.get() and datevar.get() and catvar.get()):
         amount = int(amountvar.get())
         c = conn.cursor()
+<<<<<<< HEAD
         c.execute("Insert INTO wallet(DATE,AMOUNT,CATEGORY,TYPE) VALUES(:Date,:Amount,:Category,:Type)",
+=======
+        c.execute("Insert INTO wallet(DATE,AMOUNT,CATEGORY,TYPE) VALUES(:date,:amount,:category,:type)",
+
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
                   {
                       'date': datevar.get(),
                       'amount': amountvar.get(),
                       'category': catvar.get(),
                       'type': var.get()
                   }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
                   )
         c.execute("SELECT Balance FROM Account")
         records = c.fetchall()
@@ -279,6 +297,10 @@ def submit():
             totbalance = totbalance + amount
 
         c.execute("""UPDATE Account SET Balance=:balance
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
                 WHERE id = :Id """,
                   {
                       'balance': totbalance,
@@ -292,6 +314,14 @@ def submit():
     else:
         messagebox.showwarning(
             title="Warning", message="Please Fillup")
+<<<<<<< HEAD
+=======
+
+    conn.commit()
+    conn.close()
+
+
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
 
     conn.commit()
     conn.close()
@@ -300,7 +330,11 @@ def show_edit():
     global showEditwindow
     showEditwindow = Tk()
     showEditwindow.geometry("980x500")
+<<<<<<< HEAD
     showEditwindow.title('Budget Manager')          #Window configuration (Dimensions, Title, etc...)
+=======
+    showEditwindow.title('Budget Manager App')          #Window configuration (Dimensions, Title, etc...)
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
     global combodatevar
     global dateCombo
 
@@ -366,7 +400,11 @@ def open_mainwindow():
 
     mainWindow = Tk()
     mainWindow.geometry("950x500")
+<<<<<<< HEAD
     mainWindow.title('Budget Manager')
+=======
+    mainWindow.title('Budget Manager App')
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
 
     # rootHeight = mainWindow.winfo_height()
     # rootWidth = mainWindow.winfo_width()
@@ -518,14 +556,40 @@ def open_mainwindow():
         x.append(info[0])
         y.append(info[1])
 
+<<<<<<< HEAD
     savingLabel = Label(Frame_3, text="Saving Target",font=("Arial Bold", 10))
     savingLabel.grid(row=0, column=0, pady=(100, 20), padx=(20, 10))
 
     savingEntry = Entry(Frame_3, width=35, bd=2, )
+=======
+
+    global savingEntry
+    global targetLabelEntry
+    global monthlyEntry
+
+    f = open("savings.txt", 'r')
+    filedata = f.read()
+    print(filedata.splitlines())
+
+    x = []
+    y = []
+    for line in open("savings.txt", "r").readlines():  # Read the lines
+        
+        info = line.split()
+        print(info)
+        x.append(info[0])
+        y.append(info[1])
+
+    savingLabel = Label(frame_middle_3, text="Saving Target",font=("Arial Bold", 10))
+    savingLabel.grid(row=0, column=0, pady=(100, 20), padx=(20, 10))
+
+    savingEntry = Entry(frame_middle_3, width=35, bd=2, )
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
     savingEntry.grid(row=0, column=1, pady=(100, 20), padx=10, ipadx=5)
 
     savingEntry.insert(0, y[0])
 
+<<<<<<< HEAD
     targetLabel = Label(Frame_3, text="Spending target", font=("Arial Bold", 10))
     targetLabel.grid(row=1, column=0, pady=(0, 20), padx=(20, 10),)
 
@@ -542,6 +606,24 @@ def open_mainwindow():
     monthlyEntry.insert(0, y[2])
 
 # Database Part ----------
+=======
+    targetLabel = Label(frame_middle_3, text="Spending target",font=("Arial Bold", 10))
+    targetLabel.grid(row=1, column=0, pady=(0, 20), padx=(20, 10),)
+
+    targetLabelEntry = Entry(frame_middle_3, width=35, bd=2, )
+    targetLabelEntry.grid(row=1, column=1, pady=(0, 20), padx=10, ipadx=5)
+    targetLabelEntry.insert(0, y[1])
+
+    monthlyLabel = Label(frame_middle_3, text="Estimated Budget", font=("Arial Bold", 10))
+
+    monthlyLabel.grid(row=2, column=0, pady=(0, 20), padx=(20, 10))
+
+    monthlyEntry = Entry(frame_middle_3, width=35, bd=2,)
+    monthlyEntry.grid(row=2, column=1, pady=(0, 20), padx=10, ipadx=5)
+    monthlyEntry.insert(0, y[2])
+
+############################# database
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
 
 # Time Label
     global time_label
@@ -595,5 +677,10 @@ loginBtn.grid(row=3, column=1, pady=5)
 
 frame.place(relx=0.5, rely=0.5, anchor=CENTER)
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 7c2554ecf5e168ddde76925bba53d66a19075956
 conn.close()
 root.mainloop()
