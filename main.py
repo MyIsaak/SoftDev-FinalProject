@@ -22,11 +22,10 @@ from matplotlib.pyplot import Figure
 matplotlib.use('TkAgg')  
 root = Tk()
 root.geometry("600x400")
-root.title('Villasukka')
+root.title('Budget Manager')
 frame = Frame(root,)
 
 # Login_Labels
-
 sign = Label(frame, text="Login", font=('Arial Bold', 32))
 sign.grid(row=0, column=1)
 
@@ -34,7 +33,6 @@ userLabel = Label(frame, text="Username: ")
 userLabel.grid(row=1, column=0,)
 PasswordLabel = Label(frame, text="Password: ")
 PasswordLabel.grid(row=2, column=0, )
-
 
 # Login_Entrys
 userName = Entry(frame, width=35, bd=2)
@@ -48,7 +46,6 @@ def time():
     now = datetime.now()
     date_time = now.strftime("%I:%M:%S")
     time_label.config(text=date_time)
-
 
 def verify_login():
     suffix = []
@@ -173,7 +170,7 @@ def show_summary():
     global showWindow
     showWindow = Tk()
     showWindow.geometry("750x500")
-    showWindow.title('Villasukka')
+    showWindow.title('Budget Manager')
     global combodatevar
     global dateCombo
 
@@ -231,7 +228,6 @@ def update_savings():
     f.close()
 
 # Lotto
-
 def play_lotto():
 
     am = 1000
@@ -260,13 +256,51 @@ def play_lotto():
     conn.close()
     messagebox.showinfo(title="Lotto", message="Gambling is stupid you have won nothing")
 
+def submit():
+    conn = sqlite3.connect('Money_Transaction.db')
 
+    if(amountvar.get() and datevar.get() and catvar.get()):
+        amount = int(amountvar.get())
+        c = conn.cursor()
+        c.execute("Insert INTO wallet(DATE,AMOUNT,CATEGORY,TYPE) VALUES(:Date,:Amount,:Category,:Type)",
+                  {
+                      'date': datevar.get(),
+                      'amount': amountvar.get(),
+                      'category': catvar.get(),
+                      'type': var.get()
+                  }
+                  )
+        c.execute("SELECT Balance FROM Account")
+        records = c.fetchall()
+        totbalance = int(''.join(map(str, records[0])))  # int value
+        if(var.get() == 0):
+            totbalance = totbalance - amount
+        else:
+            totbalance = totbalance + amount
+
+        c.execute("""UPDATE Account SET Balance=:balance
+                WHERE id = :Id """,
+                  {
+                      'balance': totbalance,
+                      'Id': 1
+                  }
+                  )
+        messagebox.showinfo(
+            title="Successful", message="Transaction Successful")
+        amountEntry.delete(0, END)
+
+    else:
+        messagebox.showwarning(
+            title="Warning", message="Please Fillup")
+
+    conn.commit()
+    conn.close()
 
 def show_edit():
     global showEditwindow
     showEditwindow = Tk()
     showEditwindow.geometry("980x500")
-    showEditwindow.title('Amazing butler App')          #Window configuration (Dimensions, Title, etc...)
+    showEditwindow.title('Budget Manager')          #Window configuration (Dimensions, Title, etc...)
     global combodatevar
     global dateCombo
 
@@ -300,9 +334,7 @@ def show_edit():
     RefreshButton = Button(showEditwindow, text="Refresh", bg="Blue", fg="white", height=1, width=15, font="Raleway", command=showEditwindow.destroy)
     RefreshButton.place(x=650, y=150, )                                                                                                         # Refresh Btn
 
-    # Now going to what we called as a tree
     # total savings = (total income - total expenses)
-
     TreeFrame = Frame(showEditwindow, width=600, height=280, bg="red")
     TreeFrame.pack(side=LEFT, padx=20)
 
@@ -334,7 +366,7 @@ def open_mainwindow():
 
     mainWindow = Tk()
     mainWindow.geometry("950x500")
-    mainWindow.title('Villasukka App')
+    mainWindow.title('Budget Manager')
 
     # rootHeight = mainWindow.winfo_height()
     # rootWidth = mainWindow.winfo_width()
@@ -360,7 +392,6 @@ def open_mainwindow():
     MyOwnMenu.add_cascade(label="File", menu=Help_menu)
 
     # Frames:
-
     frame_add = Frame(mainWindow, width=280, height=480,)
 
     frame_add.grid(row=0, column=0, padx=10, pady=10, sticky='nw')
@@ -386,13 +417,10 @@ def open_mainwindow():
 
     final_info = condition + " Beirut " + str(temp) + "°C"
 
-    # final info = "NO INTERNET CONNECTION"
-
     weatherLabel = Label(
         Frame_1, text="weather "+final_info+"", borderwidth=1, relief="solid", font=('Arial Bold', 10))
     weatherLabel.grid(
         row=0, column=0, pady=(0, 20), padx=20, ipadx=10, ipady=10,  sticky='ew')
-
 
     global var
     global catvar
@@ -455,7 +483,6 @@ def open_mainwindow():
 
     GetTimeButton.grid(row=0, column=0, pady=20, padx=5, sticky="ew")
 
-
     LogoutButton2 = Button(Frame_2, text="Logout", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=mainWindow.quit)
     LogoutButton2.grid(row=0, column=3, pady=(100, 20), padx=100)
 
@@ -475,11 +502,48 @@ def open_mainwindow():
     ReturnButton = Button(Frame_3, text="Return", bg="#4465f9",fg="white", height=1, width=15, font="Raleway", command=lambda: show_frame(Frame_1))
     ReturnButton.grid(row=2, column=3, pady=(0, 20), padx=50)
 
+    global savingEntry
+    global targetLabelEntry
+    global monthlyEntry
 
-################################### database
+    f = open("savings.txt", 'r')
+    filedata = f.read()
+    print(filedata.splitlines())
+
+    x = []
+    y = []
+    for line in open("savings.txt", "r").readlines():
+        info = line.split()
+        print(info)
+        x.append(info[0])
+        y.append(info[1])
+
+    savingLabel = Label(Frame_3, text="Saving Target",font=("Arial Bold", 10))
+    savingLabel.grid(row=0, column=0, pady=(100, 20), padx=(20, 10))
+
+    savingEntry = Entry(Frame_3, width=35, bd=2, )
+    savingEntry.grid(row=0, column=1, pady=(100, 20), padx=10, ipadx=5)
+
+    savingEntry.insert(0, y[0])
+
+    targetLabel = Label(Frame_3, text="Spending target", font=("Arial Bold", 10))
+    targetLabel.grid(row=1, column=0, pady=(0, 20), padx=(20, 10),)
+
+    targetLabelEntry = Entry(Frame_3, width=35, bd=2, )
+    targetLabelEntry.grid(row=1, column=1, pady=(0, 20), padx=10, ipadx=5)
+    targetLabelEntry.insert(0, y[1])
+
+    monthlyLabel = Label(Frame_3, text="Estimated Budget", font=("Arial Bold", 10))
+
+    monthlyLabel.grid(row=2, column=0, pady=(0, 20), padx=(20, 10))
+
+    monthlyEntry = Entry(Frame_3, width=35, bd=2,)
+    monthlyEntry.grid(row=2, column=1, pady=(0, 20), padx=10, ipadx=5)
+    monthlyEntry.insert(0, y[2])
+
+# Database Part ----------
 
 # Time Label
-    
     global time_label
     time_label = Label(frame_add, text="Pick Time", font=("Arial", 10))
     time_label.grid(row=1, column=0, pady=5, padx=20,)
@@ -494,8 +558,6 @@ def open_mainwindow():
     cal.grid(row=2, column=0, pady=20, padx=20, )
     update_Amount()
     conn.close()
-
-
 
 conn = sqlite3.connect('Money_Transaction.db')
 c = conn.cursor()
@@ -527,20 +589,11 @@ c.execute("Insert or IGNORE INTO Account VALUES(:id,:balance)",
           )
 conn.commit()
 
-
-
 #LogButtons
 loginBtn = Button(frame, text="login", bg="Green",fg="white", height=1, width=10, font="Raleway", command=open_mainwindow)
 loginBtn.grid(row=3, column=1, pady=5)
 
-
 frame.place(relx=0.5, rely=0.5, anchor=CENTER)
-
-
-
-
-
-
 
 conn.close()
 root.mainloop()
